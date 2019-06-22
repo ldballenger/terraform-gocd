@@ -21,3 +21,11 @@ data "template_file" "cruiseconfig" {
 data "template_file" "gocdnginxconfig" {
   template = "${file("${path.module}/config/gocd.ballenger.dev.conf.tpl")}"
 }
+
+data "template_file" "letsencrypt-digitalocean" {
+  template = "${file("${path.module}/.secrets/certbot/digitalocean.ini.tpl")}"
+
+  vars = {
+   do-token = "${var.do_token}"
+  }  
+}
