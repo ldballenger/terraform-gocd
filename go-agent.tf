@@ -1,5 +1,5 @@
-resource "digitalocean_droplet" "go-agent-XX" {
-  count = 2
+resource "digitalocean_droplet" "go-agent" {
+  count = 1
   image = "centos-7-x64"
   name = "go-agent-0${count.index}"
   region = "nyc3"
@@ -17,7 +17,6 @@ resource "digitalocean_droplet" "go-agent-XX" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sleep 25",
       "sudo yum -y update",
       "curl https://download.gocd.org/gocd.repo -o /etc/yum.repos.d/gocd.repo",
       "sudo yum install -y java-1.8.0-openjdk",
