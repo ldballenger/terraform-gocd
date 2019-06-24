@@ -18,8 +18,7 @@ resource "digitalocean_droplet" "go-server" {
   provisioner "remote-exec" {
     inline = [
       "sudo yum -y update",
-      "sudo yum -y install yum-utils",
-      "sudo yum -y install epel-release",
+      "sudo yum -y install yum-utils epel-release httpd-tools",
       "yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional",
       "curl https://download.gocd.org/gocd.repo -o /etc/yum.repos.d/gocd.repo",
       "sudo yum install -y java-1.8.0-openjdk",
@@ -44,11 +43,15 @@ resource "digitalocean_droplet" "go-server" {
   provisioner "file" {
    source     = "ssl/ssl-dhparams.pem"
    destination = "/etc/ssl/dhparam.pem"
-  }      
+  }       
   provisioner "file" {
    content     = "${data.template_file.cruiseconfig.rendered}"
    destination = "/etc/go/cruise-config.xml"
-  }  
+  }
+  provisioner "file" {
+   source     = ".secrets/go-server/passwd"
+   destination = "/etc/go/passwd"
+  }    
   provisioner "file" {
    content     = "${data.template_file.gocdnginxconfig.rendered}"
    destination = "/etc/nginx/nginx.conf"
@@ -56,10 +59,12 @@ resource "digitalocean_droplet" "go-server" {
   provisioner "remote-exec" {
     inline = [
       "chmod 600 ~/.secrets/certbot/digitalocean.ini",
+      "chown go:go /etc/go/passwd",
+      "chmod 600 /etc/go/passwd",
       "sudo certbot certonly --dns-digitalocean --dns-digitalocean-credentials ~/.secrets/certbot/digitalocean.ini -d gocd.ballenger.dev --agree-tos --email 'southpaw930@gmail.com' --no-eff-email",      
       "ln -s /etc/letsencrypt/live/gocd.ballenger.dev/fullchain.pem /etc/ssl/ssl_cert.pem",
       "ln -s /etc/letsencrypt/live/gocd.ballenger.dev/privkey.pem /etc/ssl/ssl_key.pem",
-      #"echo \"0 0,12 * * * python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew\" | sudo tee -a /etc/crontab > /dev/null"                        
+      "echo \"0 0,12 * * * python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew\" | sudo tee -a /etc/crontab > /dev/null"                        
       "chown go:go /etc/go/cruise-config.xml",
       "chmod 664 /etc/go/cruise-config.xml",
       "sudo /etc/init.d/go-server start",
