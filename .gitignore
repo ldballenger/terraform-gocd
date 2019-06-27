@@ -5,3 +5,4 @@ ssl/ssl_key.pem
 terraform.tfstate.backup
 terraform.tfstate
 ssl/ssl_cert.pem
+*.tfplan
