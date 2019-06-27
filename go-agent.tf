@@ -21,6 +21,7 @@ resource "digitalocean_droplet" "go-agent" {
       "curl https://download.gocd.org/gocd.repo -o /etc/yum.repos.d/gocd.repo",
       "sudo yum install -y java-1.8.0-openjdk",
       "mkdir /var/go",
+      "chown go:go /var/go",
       "sudo yum install -y go-agent"
     ]
   }
@@ -30,7 +31,16 @@ resource "digitalocean_droplet" "go-agent" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo /etc/init.d/go-agent start"
+      "sudo /etc/init.d/go-agent start",
+      "sudo yum -y install unzip wget",
+      "sudo yum -y install https://releases.hashicorp.com/vagrant/2.2.5/vagrant_2.2.5_x86_64.rpm",      
+      "chown go:go /var/go",
+      "wget -O /tmp/terraform_0.12.3_linux_amd64.zip https://releases.hashicorp.com/terraform/0.12.3/terraform_0.12.3_linux_amd64.zip",
+      "sudo unzip /tmp/terraform_0.12.3_linux_amd64.zip -d /tmp/",
+      "mv /tmp/terraform /usr/bin/terraform",
+      "su - go -c 'vagrant plugin install vagrant-digitalocean'",
+      "su - go -c 'vagrant plugin install vagrant-managed-servers'",
+      "su - go -c 'vagrant plugin install vagrant-puppet-install'"
     ]
   }
 }
