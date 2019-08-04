@@ -23,7 +23,7 @@ resource "digitalocean_droplet" "go-server" {
       "curl https://download.gocd.org/gocd.repo -o /etc/yum.repos.d/gocd.repo",
       "sudo yum install -y java-1.8.0-openjdk",
       "mkdir /var/go",
-      "sudo yum -y install go-server",
+      "sudo yum -y install go-server-19.5.0-9272",
       "sudo yum -y install nginx",
       "sudo systemctl stop nginx",
       #"sudo yum -y install certbot python2-certbot-nginx",

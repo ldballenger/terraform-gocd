@@ -22,7 +22,7 @@ resource "digitalocean_droplet" "go-agent" {
       "sudo yum install -y java-1.8.0-openjdk",
       "mkdir /var/go",
       "chown go:go /var/go",
-      "sudo yum install -y go-agent"
+      "sudo yum install -y go-agent-19.5.0-9272"
     ]
   }
   provisioner "file" {
