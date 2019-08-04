@@ -2,7 +2,7 @@ resource "digitalocean_droplet" "go-agent" {
   count = 1
   image = "centos-7-x64"
   name = "go-agent-0${count.index}"
-  region = "nyc3"
+  region = "${var.availability_zone_names[0]}"
   size = "1gb"
   private_networking = true
   ssh_keys = [
@@ -22,16 +22,16 @@ resource "digitalocean_droplet" "go-agent" {
       "sudo yum install -y java-1.8.0-openjdk",
       "mkdir /var/go",
       "chown go:go /var/go",
-      "sudo yum install -y go-agent-19.5.0-9272"
+      "sudo yum install -y go-agent-19.7.0-9567"
     ]
   }
   provisioner "file" {
    content     = "${data.template_file.goagentconf.rendered}"
-   destination = "/etc/default/go-agent"
+   destination = "/usr/share/go-agent/wrapper-config/wrapper-properties.conf"
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo /etc/init.d/go-agent start",
+      "sudo service go-agent start",
       "sudo yum -y install unzip wget",
       "sudo yum -y install https://releases.hashicorp.com/vagrant/2.2.5/vagrant_2.2.5_x86_64.rpm",      
       "chown go:go /var/go",

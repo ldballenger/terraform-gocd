@@ -1,5 +1,5 @@
 data "template_file" "goagentconf" {
-  template = "${file("${path.module}/config/go-agent.tpl")}"
+  template = "${file("${path.module}/config/go-agent.wrapper-properties.tpl")}"
 
   vars = {
     go-server_priv_ip = "${digitalocean_droplet.go-server.ipv4_address_private}"

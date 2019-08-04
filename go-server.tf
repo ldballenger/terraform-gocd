@@ -21,9 +21,9 @@ resource "digitalocean_droplet" "go-server" {
       "sudo yum -y install yum-utils epel-release httpd-tools",
       "yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional",
       "curl https://download.gocd.org/gocd.repo -o /etc/yum.repos.d/gocd.repo",
-      "sudo yum install -y java-1.8.0-openjdk",
+      "sudo yum install -y java-1.8.0-openjdk", # Need to  figure out how to get this to run on OpenJDK 12
       "mkdir /var/go",
-      "sudo yum -y install go-server-19.5.0-9272",
+      "sudo yum -y install go-server-19.7.0-9567",
       "sudo yum -y install nginx",
       "sudo systemctl stop nginx",
       #"sudo yum -y install certbot python2-certbot-nginx",
@@ -67,7 +67,7 @@ resource "digitalocean_droplet" "go-server" {
       "echo \"0 0,12 * * * python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew\" | sudo tee -a /etc/crontab > /dev/null"                        
       "chown go:go /etc/go/cruise-config.xml",
       "chmod 664 /etc/go/cruise-config.xml",
-      "sudo /etc/init.d/go-server start",
+      "sudo service go-server start",
       "setsebool -P httpd_can_network_connect 1",
       "systemctl restart nginx",
     ]
